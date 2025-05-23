@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Translator App</title>
+</head>
+<body>
+  <h1>Traducere text</h1>
+
+  <textarea id="inputText" rows="5" cols="50" placeholder="Scrie textul aici..."></textarea>
+  <br><br>
+
+  <label for="langSelect">Limbă țintă:</label>
+  <select id="langSelect">
+    <option value="EN">Engleză</option>
+    <option value="FR">Franceză</option>
+    <option value="DE">Germană</option>
+  </select>
+  <br><br>
+
+  <button onclick="translateText()">Tradu</button>
+
+  <h2>Rezultat:</h2>
+  <div id="resultBox"></div>
+  <br>
+
+  <button onclick="uploadToDropbox()">Salvează în Dropbox</button>
+
+  <script>
+    let translatedText = "";
+
+    async function translateText() {
+      const text = document.getElementById("inputText").value;
+      const lang = document.getElementById("langSelect").value;
+
+      const response = await fetch("/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, lang })
+      });
+
+      const data = await response.json();
+      translatedText = data.translatedText;
+      document.getElementById("resultBox").innerText = translatedText;
+    }
+
+    async function uploadToDropbox() {
+      if (!translatedText) {
+        alert("Mai întâi traduci textul!");
+        return;
+      }
+
+      const filename = "traducere.txt";
+      const response = await fetch("/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename, content: translatedText })
+      });
+
+      const data = await response.json();
+      alert("Textul a fost salvat: " + data.url);
+    }
+  </script>
+</body>
+</html>
