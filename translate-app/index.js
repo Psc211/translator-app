@@ -26,7 +26,7 @@ app.post("/upload", async (req, res) => {
     const response = await upload(filename, content);
     res.json({ message: "Fișier încărcat!", url: response });
   } catch (error) {
-    res.status(500).json({ error: "Eroare la încărcare Dropbox." });
+    res.status(500).json({ error: "Eroare la încărcare Dropbox."});
   }
 });
 
